@@ -1,15 +1,11 @@
 const express = require('express');
 const bodyparser = require('body-parser');
+const MongoClient = require('mongodb').MongoClient;
+
 
 const app = express();
 
-var store = [
-    {
-        id:'12214wffeferf',
-        product: 'Milk',
-        price: 2.99
-    }
-];
+const productApi = require('./api/product.apis');
 
 
 app.use(bodyparser.json());
@@ -19,23 +15,16 @@ app.use(bodyparser.urlencoded({
 
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
+    res.header();
     next();
 });
 
-app.get('/', function (req, res) {
-    res.send('hello world');
+MongoClient.connect('mongodb://localhost:27017/ProductManagement', function(err, db){
+    console.log('Connected correctly to mongo server');
+    // db.close();
 });
 
-app.post('/', function (req, res) {
-    res.send('hello from post');
-});
-
-app.post('/add', function (req, res) {
-    console.log(req.query);
-    store.push(req.query);
-    res.send('hello from post' + JSON.stringify(store));
-});
-
+productApi(app);
 
 app.listen(3000, function(){
     console.log("Running on 3000");
